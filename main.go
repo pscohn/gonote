@@ -17,20 +17,20 @@ var (
 )
 
 func runCmd(arg string) {
-	fmt.Println("destination:", *dest)
 
 	if *newCategory {
 		category := models.Category{Name: arg}
-		db.DB.Save(&category)
-		fmt.Printf("created category \"%v\"", arg)
+		db.DB.Create(&category)
+		fmt.Printf("created category \"%v\"\n", arg)
 		return
 	}
 
 	if *dest == "" {
-		//TODO: handle error better
+		//	TODO: handle error better
 		return
 	}
 
+	fmt.Println("destination:", *dest)
 	if *newNote {
 		note := models.Note{Id: 0, Note: arg}
 		db.DB.Save(&note)
@@ -41,8 +41,9 @@ func runCmd(arg string) {
 }
 
 func main() {
+	db.Connect()
 	_ = db.Setup()
-	//defer db.Close()
+	defer db.Close()
 	flag.Parse()
 	arg := strings.Join(flag.Args(), " ")
 	runCmd(arg)
