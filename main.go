@@ -12,7 +12,7 @@ var (
 	list        = flag.Bool("l", false, "list all categories")
 	newNote     = flag.Bool("n", false, "save a new note")
 	newCategory = flag.Bool("c", false, "create a category")
-	get         = flag.String("g", "", "get notes from category")
+	get         = flag.Bool("g", false, "get notes from category")
 	dest        = flag.String("d", "", "destination for note")
 	db          models.Database
 )
@@ -47,18 +47,18 @@ func createNote(arg string) {
 	fmt.Printf("added to %v: \"%v\"\n", *dest, arg)
 }
 
-func getNotes() {
-	if *get == "" {
+func getNotes(arg string) {
+	if arg == "" {
 		fmt.Println("no category specified")
 		return
 	}
 	destCategory := models.Category{}
-	db.DB.Where("Name = ?", *dest).First(&destCategory)
+	db.DB.Where("Name = ?", arg).First(&destCategory)
 	notes := []models.Note{}
 	db.DB.Where("category_id = ?", destCategory.Id).Find(&notes)
 	if len(notes) > 0 {
 		fmt.Println("----------------")
-		fmt.Println(*dest)
+		fmt.Println(arg)
 		fmt.Println("----------------")
 		for _, n := range notes {
 			fmt.Println(n.Note)
@@ -85,8 +85,11 @@ func runCmd(arg string) {
 		return
 	}
 
-	getNotes()
-	return
+	if *get {
+		getNotes(arg)
+		return
+	}
+
 }
 
 func main() {
