@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-var dbName = "./com.db"
+var dbName = "./gonote.db"
 
 type Category struct {
 	Id   int64
