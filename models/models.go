@@ -1,12 +1,15 @@
 package models
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
 	"os"
+	"os/user"
 )
 
-var dbName = "./gonote.db"
+var dbName = "/.gonote.db"
+var usr, err = user.Current()
 
 type Category struct {
 	Id   int64
@@ -25,7 +28,7 @@ type Database struct {
 
 func (d *Database) Connect() error {
 	var err error
-	d.DB, err = gorm.Open("sqlite3", dbName)
+	d.DB, err = gorm.Open("sqlite3", usr.HomeDir+dbName)
 	if err != nil {
 		return err
 	}
@@ -33,7 +36,7 @@ func (d *Database) Connect() error {
 }
 
 func (d *Database) Setup() error {
-	if _, err := os.Stat(dbName); os.IsNotExist(err) {
+	if _, err := os.Stat(usr.HomeDir + dbName); os.IsNotExist(err) {
 		if err := d.Connect(); err != nil {
 			return err
 		}
@@ -41,6 +44,7 @@ func (d *Database) Setup() error {
 		d.DB.DB()
 		d.DB.CreateTable(&Category{})
 		d.DB.CreateTable(&Note{})
+		fmt.Println("created sqlite database at ~/.gonote.db")
 	}
 	return nil
 }
