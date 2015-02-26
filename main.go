@@ -11,7 +11,7 @@ import (
 var (
 	newNote     = flag.Bool("n", false, "save a new note")
 	newCategory = flag.Bool("c", false, "create a category")
-	get         = flag.Bool("g", false, "get recent notes")
+	get         = flag.String("g", "", "get recent notes")
 	dest        = flag.String("d", "", "destination for note")
 	db          models.Database
 )
@@ -25,18 +25,23 @@ func runCmd(arg string) {
 		return
 	}
 
-	if *dest == "" {
-		//	TODO: handle error better
-		return
-	}
-
-	destCategory := models.Category{}
-	db.DB.Where("Name = ?", *dest).First(&destCategory)
 	if *newNote {
+		if *dest == "" {
+			//	TODO: handle error better
+			return
+		}
+		destCategory := models.Category{}
+		db.DB.Where("Name = ?", *dest).First(&destCategory)
 		note := models.Note{CategoryID: destCategory.Id, Note: arg}
 		db.DB.Save(&note)
 		fmt.Printf("added to %v: \"%v\"\n", *dest, arg)
-	} else if *get {
+	} else {
+		if *get == "" {
+			fmt.Println("no category specified")
+			return
+		}
+		destCategory := models.Category{}
+		db.DB.Where("Name = ?", *dest).First(&destCategory)
 		notes := []models.Note{}
 		db.DB.Where("category_id = ?", destCategory.Id).Find(&notes)
 		if len(notes) > 0 {
@@ -47,7 +52,7 @@ func runCmd(arg string) {
 				fmt.Println(n.Note)
 			}
 		} else {
-			fmt.Println("none")
+			fmt.Println("no notes")
 		}
 	}
 }
