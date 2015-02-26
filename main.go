@@ -30,13 +30,21 @@ func runCmd(arg string) {
 		return
 	}
 
-	fmt.Println("destination:", *dest)
+	destCategory := models.Category{}
+	db.DB.Where("Name = ?", *dest).First(&destCategory)
 	if *newNote {
-		note := models.Note{Id: 0, Note: arg}
+		note := models.Note{CategoryID: destCategory.Id, Note: arg}
 		db.DB.Save(&note)
 		fmt.Printf("added to %v: \"%v\"\n", *dest, arg)
 	} else if *get {
-		fmt.Println("get note:", arg)
+		fmt.Println("----------------")
+		fmt.Println(*dest)
+		fmt.Println("----------------")
+		notes := []models.Note{}
+		db.DB.Where("category_id = ?", destCategory.Id).Find(&notes)
+		for _, n := range notes {
+			fmt.Println(n.Note)
+		}
 	}
 }
 
