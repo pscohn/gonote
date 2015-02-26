@@ -37,13 +37,17 @@ func runCmd(arg string) {
 		db.DB.Save(&note)
 		fmt.Printf("added to %v: \"%v\"\n", *dest, arg)
 	} else if *get {
-		fmt.Println("----------------")
-		fmt.Println(*dest)
-		fmt.Println("----------------")
 		notes := []models.Note{}
 		db.DB.Where("category_id = ?", destCategory.Id).Find(&notes)
-		for _, n := range notes {
-			fmt.Println(n.Note)
+		if len(notes) > 0 {
+			fmt.Println("----------------")
+			fmt.Println(*dest)
+			fmt.Println("----------------")
+			for _, n := range notes {
+				fmt.Println(n.Note)
+			}
+		} else {
+			fmt.Println("none")
 		}
 	}
 }
