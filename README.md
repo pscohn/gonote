@@ -36,3 +36,4 @@ Get all notes in 'tmux'
 - Command to delete notes
 - Save date and sort by date
 - Full test coverage
+- `cat`-like terminal input
