@@ -63,6 +63,7 @@ func getNotes(arg string) {
 		for _, n := range notes {
 			fmt.Println(n.Note)
 		}
+		fmt.Println("")
 	} else {
 		fmt.Println("no notes")
 	}
