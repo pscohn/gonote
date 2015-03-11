@@ -26,6 +26,10 @@ Create a note in 'tmux' called 'tmux list-sessions'
 
     > gonote -d tmux -n tmux list-sessions
 
+Get all notes
+
+    > gonote -g
+
 Get all notes in 'tmux'
 
     > gonote -g tmux

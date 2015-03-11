@@ -50,26 +50,32 @@ func createNote(arg string) {
 	fmt.Printf("added to %v: \"%v\"\n", *dest, arg)
 }
 
-func getNotes(arg string) {
-	if arg == "" {
-		fmt.Println("no category specified")
-		return
-	}
-	destCategory := models.Category{}
-	db.DB.Where("Name = ?", arg).First(&destCategory)
-	notes := []models.Note{}
-	db.DB.Where("category_id = ?", destCategory.Id).Find(&notes)
-	if len(notes) > 0 {
+func printNotes(notes *[]models.Note, heading string) {
+	if len(*notes) > 0 {
 		fmt.Println("----------------")
-		fmt.Println(arg)
+		fmt.Println(heading)
 		fmt.Println("----------------")
-		for _, n := range notes {
+		for _, n := range *notes {
 			fmt.Println(n.Id, n.Note)
 		}
 		fmt.Println("")
 	} else {
 		fmt.Println("no notes")
 	}
+}
+
+func getAllNotes() {
+	notes := []models.Note{}
+	db.DB.Find(&notes)
+	printNotes(&notes, "all notes")
+}
+
+func getNotesForCategory(arg string) {
+	destCategory := models.Category{}
+	db.DB.Where("Name = ?", arg).First(&destCategory)
+	notes := []models.Note{}
+	db.DB.Where("category_id = ?", destCategory.Id).Find(&notes)
+	printNotes(&notes, arg)
 }
 
 func executeCommand(arg string) {
@@ -110,7 +116,11 @@ func runCmd(arg string) {
 	}
 
 	if *get {
-		getNotes(arg)
+		if arg == "" {
+			getAllNotes()
+			return
+		}
+		getNotesForCategory(arg)
 		return
 	}
 
