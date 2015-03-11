@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
+	"os/exec"
 	"strings"
 
 	"github.com/pscohn/gonote/models"
@@ -13,6 +15,7 @@ var (
 	newNote     = flag.Bool("n", false, "save a new note")
 	newCategory = flag.Bool("c", false, "create a category")
 	get         = flag.Bool("g", false, "get notes from category")
+	execute     = flag.Bool("e", false, "execute command")
 	dest        = flag.String("d", "", "destination for note")
 	db          models.Database
 )
@@ -61,12 +64,32 @@ func getNotes(arg string) {
 		fmt.Println(arg)
 		fmt.Println("----------------")
 		for _, n := range notes {
-			fmt.Println(n.Note)
+			fmt.Println(n.Id, n.Note)
 		}
 		fmt.Println("")
 	} else {
 		fmt.Println("no notes")
 	}
+}
+
+func executeCommand(arg string) {
+	findNote := models.Note{}
+	db.DB.First(&findNote, arg)
+
+	split := strings.Split(findNote.Note, " ")
+	prog := split[0]
+	rest := strings.Join(split[1:], " ")
+
+	fmt.Println(prog, rest)
+	var e bytes.Buffer
+	cmd := exec.Command(prog, split[1:]...)
+	cmd.Stderr = &e
+	stdout, err := cmd.Output()
+	if err != nil {
+		fmt.Println(string(e.Bytes()))
+		return
+	}
+	fmt.Println(string(stdout))
 }
 
 func runCmd(arg string) {
@@ -91,6 +114,10 @@ func runCmd(arg string) {
 		return
 	}
 
+	if *execute {
+		executeCommand(arg)
+		return
+	}
 }
 
 func main() {

@@ -16,25 +16,29 @@ gonote will save your notes in `~/.gonote.db`.
 
 Create a new category 'tmux'
 
-    gonote -c tmux
+    > gonote -c tmux
 
 List all categories
 
-    gonote -l
+    > gonote -l
 
 Create a note in 'tmux' called 'tmux list-sessions'
 
-    gonote -d tmux -n tmux list-sessions
+    > gonote -d tmux -n tmux list-sessions
 
 Get all notes in 'tmux'
 
-    gonote -g tmux
+    > gonote -g tmux
+
+Execute command with id "1":
+
+    > gonote -e 1
+    tmux list-sessions
 
 #Todo
 
 - Command to delete category
 - Command to delete notes
 - Save date and sort by date
-- Execute commands with arguments, like `gonote -e [id] [args, ...]`
 - Full test coverage
 - `cat`-like terminal input
