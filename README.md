@@ -35,5 +35,6 @@ Get all notes in 'tmux'
 - Command to delete category
 - Command to delete notes
 - Save date and sort by date
+- Execute commands with arguments, like `gonote -e [id] [args, ...]`
 - Full test coverage
 - `cat`-like terminal input
