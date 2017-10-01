@@ -131,8 +131,8 @@ func runCmd(arg string) {
 }
 
 func main() {
-	db.Connect()
 	db.Setup()
+	db.Connect()
 	defer db.Close()
 	flag.Parse()
 	arg := strings.Join(flag.Args(), " ")
