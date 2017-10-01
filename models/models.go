@@ -23,7 +23,7 @@ type Note struct {
 }
 
 type Database struct {
-	DB gorm.DB
+	DB *gorm.DB
 }
 
 func (d *Database) Connect() error {
